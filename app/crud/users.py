@@ -8,8 +8,10 @@ from bson.objectid import ObjectId
 printer = pprint.PrettyPrinter()
 
 def insert_user(user_obj):
-    id = str(users_collections.insert_one(dict(user_obj)).inserted_id)
-    printer.pprint(id)
+    try:
+        id = str(users_collections.insert_one(dict(user_obj)).inserted_id)
+    except Exception:
+        raise HTTPException(status_code=404, detail="There was a problem inserting a new document")
     return id
 
 
