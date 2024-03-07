@@ -3,6 +3,8 @@ import os
 import pprint
 from pymongo import MongoClient
 from dotenv import load_dotenv, find_dotenv
+from bson.objectid import ObjectId
+from pydantic import BaseModel
 
 load_dotenv(find_dotenv())
 conn_string = "mongodb://localhost:27017/data"
@@ -42,11 +44,63 @@ def get_all():
     for user in all_users:
         printer.pprint(user)
 
-get_all()
+# get_all()
 
-def get_one():
-    pass
+def get_one(user_id):
+    _id = ObjectId(user_id)
+    user = user_collection.find_one({"_id":_id})
+    printer.pprint(user)
 
+
+# get_one("65e90d331f0c26e56a602b13")
+
+
+
+def get_some_cols():
+    cols = {"_id": 0, "first_name": 1, "last_name": 1}
+    users = user_collection.find({}, cols)
+    for user in users:
+        printer.pprint(user)
+
+# get_some_cols()
+        
+def query_users_by_exp(start, end):
+    query = {
+        "$and": [
+            {"experience_years": {"$gte": start}}, 
+            {"experience_years": {"$lte": end}}
+        ]
+    }
+    result = user_collection.find(query).sort("experience_years", -1)
+
+    for user in result:
+        printer.pprint(user)
+
+query_users_by_exp(2,8)
+
+def delete_by_id(user_id):
+    _id = ObjectId(user_id)
+    deleted = user_collection.delete_one({"_id": _id})
+    print(deleted.deleted_count)
+
+# delete_by_id("65e90b4cadc232407580175a")
+    
+
+class User(BaseModel):
+    first_name: str
+    last_name: str
+    occupancy: str
+    experience_years: int
+
+
+def update_user_by_id(user_id, data):
+    _id = ObjectId(user_id)
+    updated = user_collection.update_one({"_id": _id}, {"$set": {"first_name": data.first_name, "last_name": data.last_name, "occupancy": data.occupancy, "experience_years": data.experience_years}})
+    print(updated.modified_count)
+
+new_user = User(first_name="Lazio", last_name="Olsu", occupancy="Softweare", experience_years=5)
+
+# update_user_by_id("65e90d331f0c26e56a602b13", new_user)
 
 app = FastAPI()
 
