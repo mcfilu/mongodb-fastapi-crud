@@ -2,19 +2,15 @@ import pprint
 from database.init import users_collections
 from schemas.users import User
 from fastapi import HTTPException
+from helpers.make_users import get_object_id
 from bson.objectid import ObjectId
 
 printer = pprint.PrettyPrinter()
 
-def insert_user():
-    new_user = {
-        "first_name": "Mathew",
-        "last_name": "Gunner",
-        "ocupation": "Driver", 
-        "experience_years": 8,
-    }
-    id = users_collections.insert_one(new_user).inserted_id
-    print(id)
+def insert_user(user_obj):
+    id = str(users_collections.insert_one(dict(user_obj)).inserted_id)
+    printer.pprint(id)
+    return id
 
 
 def get_all():
@@ -25,7 +21,7 @@ def get_all():
 
 
 def get_one_user(user_id):
-    
+    _id = get_object_id(user_id)
     one_user = users_collections.find_one({"_id":_id})
     if not one_user:
         raise HTTPException(status_code=404, detail="Such user does not exist")
@@ -55,9 +51,11 @@ def query_users_by_exp(start, end):
 
 
 def delete_by_id(user_id):
-    _id = ObjectId(user_id)
-    deleted = users_collections.delete_one({"_id": _id})
-    return deleted.deleted_count
+    _id = get_object_id(user_id)
+    deleted = users_collections.delete_one({"_id": _id}).deleted_count
+    if deleted == 0:
+        raise HTTPException(status_code=404, detail="No object was deleted, it couldnt be found")
+    return deleted
 
 
 

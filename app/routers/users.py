@@ -1,5 +1,5 @@
-from fastapi import APIRouter
-from crud.users import get_one_user, delete_by_id
+from fastapi import APIRouter, HTTPException
+from crud.users import get_one_user, delete_by_id, insert_user
 from helpers.make_users import create_user_inst
 from schemas.users import User
 import pprint
@@ -32,16 +32,30 @@ def delete_user_by_id(user_id:str):
 
     Required the _id field from the mongodb passed as a string
 
-    Returns an akcknlowedgment when user file is deleted from db
+    Returns an akcknlowedgment when user file is deleted from db or raises an error if happens
     """
     result = delete_by_id(user_id)
+
+    if result == 1:
+        return {"acknowledgmenet": True}
     
-    return {"acknowledgmenet": result}
+    else:
+        raise HTTPException(status_code=404, detail="Some Error occured")
+    
 
 
 @router.post("/users/new")
 def create_new_user(user_obj: User):
-    pass
+    """
+    Create New User endpoint
+
+    Required the User object with field: first_name, last_name, occupancy, experience_years
+
+    Return and id of newly created object
+    """
+    new_id = insert_user(user_obj)
+    printer.pprint(new_id)
+    return {"message": "User created", "id": new_id}
 
 
 @router.put("/users/{user_id}")
