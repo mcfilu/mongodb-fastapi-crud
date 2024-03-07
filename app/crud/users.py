@@ -61,9 +61,11 @@ def delete_by_id(user_id):
 
 
 
-def update_user_by_id(user_id, data):
-    _id = ObjectId(user_id)
-    updated = users_collections.update_one({"_id": _id}, {"$set": {"first_name": data.first_name, "last_name": data.last_name, "occupancy": data.occupancy, "experience_years": data.experience_years}})
-    print(updated.modified_count)
+def update_user_by_id_crud(user_id, data):
+    _id = get_object_id(user_id)
+    updated_count = users_collections.update_one({"_id": _id}, {"$set": {"first_name": data.first_name, "last_name": data.last_name, "ocupation": data.ocupation, "experience_years": data.experience_years}}).modified_count
+    if updated_count == 0:
+        raise HTTPException(status_code=404, detail="No user file found with such id")
+    return updated_count
 
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from crud.users import get_one_user, delete_by_id, insert_user
+from crud.users import get_one_user, delete_by_id, insert_user, update_user_by_id_crud
 from helpers.make_users import create_user_inst
 from schemas.users import User
 import pprint
@@ -59,5 +59,6 @@ def create_new_user(user_obj: User):
 
 
 @router.put("/users/{user_id}")
-def update_user_by_id(user_id:int, user_obj: User):
-    pass
+def update_user_by_id(user_id:str, user_obj: User):
+    mod_count = update_user_by_id_crud(user_id, user_obj)
+    return {"modified count": mod_count}
