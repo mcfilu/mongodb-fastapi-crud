@@ -1,6 +1,7 @@
 import pprint
 from database.init import users_collections
 from schemas.users import User
+from fastapi import HTTPException
 from bson.objectid import ObjectId
 
 printer = pprint.PrettyPrinter()
@@ -24,8 +25,13 @@ def get_all():
 
 
 def get_one_user(user_id):
-    _id = ObjectId(user_id)
+    try:
+        _id = ObjectId(user_id)
+    except Exception:
+        raise HTTPException(status_code=404, detail="Wrong format of user_id provided")
     one_user = users_collections.find_one({"_id":_id})
+    if not one_user:
+        raise HTTPException(status_code=404, detail="Such user does not exist")
     return one_user
 
 
