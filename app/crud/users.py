@@ -67,11 +67,7 @@ def delete_by_id(user_id):
 # delete_by_id("65e90b4cadc232407580175a")
     
 
-class User(BaseModel):
-    first_name: str
-    last_name: str
-    occupancy: str
-    experience_years: int
+
 
 
 def update_user_by_id(user_id, data):
