@@ -25,10 +25,7 @@ def get_all():
 
 
 def get_one_user(user_id):
-    try:
-        _id = ObjectId(user_id)
-    except Exception:
-        raise HTTPException(status_code=404, detail="Wrong format of user_id provided")
+    
     one_user = users_collections.find_one({"_id":_id})
     if not one_user:
         raise HTTPException(status_code=404, detail="Such user does not exist")
@@ -56,10 +53,11 @@ def query_users_by_exp(start, end):
         printer.pprint(user)
 
 
+
 def delete_by_id(user_id):
     _id = ObjectId(user_id)
     deleted = users_collections.delete_one({"_id": _id})
-    print(deleted.deleted_count)    
+    return deleted.deleted_count
 
 
 

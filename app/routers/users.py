@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from crud.users import get_one_user
+from crud.users import get_one_user, delete_by_id
 from helpers.make_users import create_user_inst
 from schemas.users import User
 import pprint
@@ -26,8 +26,17 @@ def get_user_by_id(user_id:str):
 
 
 @router.delete("/users/{user_id}")
-def delete_user_by_id(user_id:int):
-    pass
+def delete_user_by_id(user_id:str):
+    """
+    Delete Use By ID endpoint
+
+    Required the _id field from the mongodb passed as a string
+
+    Returns an akcknlowedgment when user file is deleted from db
+    """
+    result = delete_by_id(user_id)
+    
+    return {"acknowledgmenet": result}
 
 
 @router.post("/users/new")
