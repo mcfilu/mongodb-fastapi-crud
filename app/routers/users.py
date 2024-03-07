@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from crud.users import get_one_user, delete_by_id, insert_user, update_user_by_id_crud
+from crud.users import get_one_user, delete_by_id, insert_user, update_user_by_id_crud, query_users_by_exp
 from helpers.make_users import create_user_inst
 from schemas.users import User
 import pprint
@@ -60,5 +60,26 @@ def create_new_user(user_obj: User):
 
 @router.put("/users/{user_id}")
 def update_user_by_id(user_id:str, user_obj: User):
+    """
+    Update User by Id endpoint
+
+    Required the user_id passed as a string and a User Object filled with all the details
+
+    Return the number of modified documents
+    """
     mod_count = update_user_by_id_crud(user_id, user_obj)
     return {"modified count": mod_count}
+
+
+@router.get("/users/query/experience")
+def get_users_query_experience(start:int, stop:int):
+    """
+    Get Users Query By Experience
+
+    Required: start:int, stop:int, the range in which the experience has to be
+
+    Returns a list of Users objects sorted in descending order by experience
+    """
+    users = query_users_by_exp(start, stop)
+    printer.pprint(users)
+    return users

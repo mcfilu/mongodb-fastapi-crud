@@ -2,7 +2,7 @@ import pprint
 from database.init import users_collections
 from schemas.users import User
 from fastapi import HTTPException
-from helpers.make_users import get_object_id
+from helpers.make_users import get_object_id, create_user_inst
 from bson.objectid import ObjectId
 
 printer = pprint.PrettyPrinter()
@@ -39,6 +39,7 @@ def get_some_cols():
 
         
 def query_users_by_exp(start, end):
+    users_list = []
     query = {
         "$and": [
             {"experience_years": {"$gte": start}}, 
@@ -48,7 +49,9 @@ def query_users_by_exp(start, end):
     result = users_collections.find(query).sort("experience_years", -1)
 
     for user in result:
-        printer.pprint(user)
+        users_list.append(create_user_inst(user))
+
+    return users_list
 
 
 
