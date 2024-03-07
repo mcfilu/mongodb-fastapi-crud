@@ -23,14 +23,10 @@ def get_all():
         printer.pprint(user)
 
 
-def get_one(user_id):
+def get_one_user(user_id):
     _id = ObjectId(user_id)
-    user = users_collections.find_one({"_id":_id})
-    printer.pprint(user)
-
-
-
-
+    one_user = users_collections.find_one({"_id":_id})
+    return one_user
 
 
 def get_some_cols():

@@ -1,4 +1,4 @@
-from pytube import MongoClient
+from pymongo import MongoClient
 
 conn_string = "mongodb://localhost:27017/"
 
